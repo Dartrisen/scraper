@@ -1,15 +1,20 @@
 import requests, time
 from bs4 import BeautifulSoup
 
-class CryptoPrices(object):
-    url    = "https://bankiros.ru/crypto"
-    prices = []
 
-    def _getHtml(self):
+class Crypto:
+    def __init__(self):
+        self.url    = "https://bankiros.ru/crypto"
+        self.prices = []
+        self.get_prices_from_site()
+
+
+    def get_Html(self):
         html = requests.get(self.url).text
         return html
 
-    def _parseHtml(self, html):
+
+    def parse_Html(self, html):
         soup    = BeautifulSoup(html, "html.parser")
         table   = soup.find("table", {"class" : "crypto_table"})
 
@@ -24,13 +29,16 @@ class CryptoPrices(object):
         del rows[0]
         return rows
 
-    def _getPricesFromSite(self):
-        self.prices = self._parseHtml(self._getHtml())
 
-    def getPrices(self):
+    def get_prices_from_site(self):
+        self.prices = self.parse_Html(self.get_Html())
+
+
+    def get_prices(self):
         return self.prices
 
-    def getPrice(self, price):
+
+    def get_price(self, price):
         for item in self.prices:
             if (price in item):
                 return item[0:2]
@@ -38,14 +46,13 @@ class CryptoPrices(object):
                 pass
         print("Crypt not found!")
 
+
     def clear(self):
         self.prices.clear()
 
-    def __init__(self):
-        self._getPricesFromSite()
 
 def main():
-    crypto = CryptoPrices()
+    crypto = Crypto()
     crypts =["BitcoinBTC", "Ethereum ETH", "LitecoinLTC",
             "MoneroXMR", "Ethereum ClassicETC", "RippleXRP",
             "Bitcoin Cash / BCCBCH", "EOSEOS", "NEONEO",
@@ -53,17 +60,22 @@ def main():
             "OmiseGoOMG", "Bitcoin GoldBTG", "TronixTRX",
             "StellarXLM", "SantimentSAN", "TetherUSDT",
             "VergeXVG", "ViberateVIB"]
-    print("Please choose required crypt:")
-    for item in crypts:
-        print(item)
-    crypt = input()
-    while True:
-        #TODO regular expressions
-        if (crypto.getPrice(crypt)):
-            print(crypto.getPrice(crypt))
+
+    print("Please choose required crypts (1 2 3 for example):")
+
+    for idx, item in enumerate(crypts, 1):
+        print("[{0}], {1}".format(idx, item))
+
+    try:
+        idx = input()
+        idx_list = list(map(int, idx.split()))
+        while True:
+            for idx in idx_list:
+                print(" ".join(crypto.get_price(crypts[idx-1])))
             time.sleep(10)
-        else:
-            crypt = input()
+    except Exception as e:
+        print("Please choose correct number (numbers)")
+
 
 if __name__ == '__main__':
     main()
