@@ -1,1 +1,1 @@
-# Console scraper for crypt like Bitcoin, LiteCoin etc.
+# Console scraper for Bitcoin, LiteCoin etc.
